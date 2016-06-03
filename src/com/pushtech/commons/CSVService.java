@@ -20,7 +20,7 @@ public class CSVService {
    }
 
    private String getProductLineForCSV(Product product, String separator) {
-      String data = product.getId() + separator;
+      String data = product.getProductId() + separator;
       data += product.getName() + separator;
       data += product.getLink() + separator;
       data += product.getDescription() + separator;

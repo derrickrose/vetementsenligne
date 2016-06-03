@@ -16,7 +16,7 @@ import com.pushtech.crawler.launcher.DataBaseUpdaterHelper.UpdateWay;
 
 public class ProductDAO extends AbstractDAOEntity {
 
-   private static final String TABLE_NAME = "alcodistribution";
+   private static final String TABLE_NAME = "grossiste";
    private static final String INSERT_REQUEST = initInsertRequest();
    private static final String READ_REQUEST = initReadRequest();
    private static final String SEARCH_REQUEST = initSearchRequest();
@@ -29,7 +29,7 @@ public class ProductDAO extends AbstractDAOEntity {
    }
 
    public Product searchEntity(Product siteProduct) {
-      return searchEntity(siteProduct.getId());
+      return searchEntity(siteProduct.getProductId());
    }
 
    @Override
@@ -58,7 +58,7 @@ public class ProductDAO extends AbstractDAOEntity {
       int status = 0;
       try {
          connection = daoFactory.getConnection();
-         preparedStatement = initPreparedRequest(connection, INSERT_REQUEST, true, product.getId(), validate(product.getName()), validate(product.getLink()), validate(product.getImage()), validate(product.getDescription()), validate(product.getKeyWord()), product.getPrice(), product.getShippingCost(), product.getShippingDelay(), validate(product.getBrand()), validate(product.getCategory()), product.getQuantity(), getNowDate());
+         preparedStatement = initPreparedRequest(connection, INSERT_REQUEST, true, product.getProductId(), validate(product.getName()), validate(product.getLink()), validate(product.getImage()), validate(product.getDescription()), validate(product.getKeyWord()), product.getPrice(), product.getShippingCost(), product.getShippingDelay(), validate(product.getBrand()), validate(product.getCategory()), product.getQuantity(), getNowDate());
          status = preparedStatement.executeUpdate();
          if (status == 0) {
             System.err.println("Save product failed");
@@ -90,20 +90,22 @@ public class ProductDAO extends AbstractDAOEntity {
 
    private Product mapper(ResultSet resultSet) throws SQLException {
       Product product = new Product();
-      product.setId(resultSet.getString("productId"));
-      // product.setParentId(resultSet.getString( "parentid" ) );
-      product.setName(resultSet.getString("Name"));
+      product.setProductId(resultSet.getString("productId"));
+      product.setParentId(resultSet.getString("parentId"));
+      product.setName(resultSet.getString("name"));
       product.setLink(resultSet.getString("link"));
       product.setDescription(resultSet.getString("description"));
       product.setBrand(resultSet.getString("brand"));
       product.setCategory(resultSet.getString("category"));
       product.setImage(resultSet.getString("image"));
-      product.setKeyWord(resultSet.getString("motclef"));
+      product.setKeyWord(resultSet.getString("keyWord"));
       product.setPrice(resultSet.getFloat("price"));
       product.setShippingCost(resultSet.getFloat("shippingCost"));
       product.setShippingDelay(resultSet.getInt("shippingDealy"));
       product.setQuantity(resultSet.getInt("quantity"));
-      product.setUpdated(resultSet.getString("update_time"));//
+      product.setColor(resultSet.getString("color"));
+      product.setSize(resultSet.getString("size"));
+      product.setUpdated(resultSet.getString("updateTime"));//
 
       return product;
    }
@@ -115,26 +117,19 @@ public class ProductDAO extends AbstractDAOEntity {
 
    private static String initInsertRequest() {
       String insertRequest = "INSERT INTO " + TABLE_NAME + " ";
-      insertRequest += "(productId, Name, link, image, description, motclef, price, shippingCost, shippingDealy, brand, category, quantity, update_time)";
+      insertRequest += "(productId, parentId, name, description, keyWord, link, image, price, olprice, shippingCost, shippingDelay, category, quantity, brand, color, size, updatetime)";
 
-      insertRequest += "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+      insertRequest += "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
       return insertRequest;
    }
 
    private static String initUpdateRequest() {
       String updateRequest = "UPDATE " + TABLE_NAME + " SET";
-      updateRequest += "  " + "Name = ?";
-      updateRequest += " , " + "link = ?";
-      updateRequest += " , " + "image = ?";
-      updateRequest += " , " + "description = ?";
-      updateRequest += " , " + "motclef = ?";
       updateRequest += " , " + "price = ?";
       updateRequest += " , " + "shippingCost = ?";
       updateRequest += " , " + "shippingDealy = ?";
-      updateRequest += " , " + "brand = ?";
-      updateRequest += " , " + "category = ?";
       updateRequest += " , " + "quantity = ?";
-      updateRequest += " , " + "update_time = ?";
+      updateRequest += " , " + "updatetime = ?";
       updateRequest += " WHERE productId = ? ";
       return updateRequest;
    }
@@ -153,7 +148,7 @@ public class ProductDAO extends AbstractDAOEntity {
             DataBaseUpdaterHelper dbuh = DataBaseUpdaterHelper.getUpdaterMode(true, UpdateWay.SIMPLE_UPDATE);
             product = dbuh.updateProduct(siteProduct, databaseProduct);
             connection = daoFactory.getConnection();
-            updateStatement = initPreparedRequest(connection, UPDATE_REQUEST, true, product.getName(), product.getLink(), product.getImage(), product.getDescription(), product.getKeyWord(), product.getPrice(), product.getShippingCost(), product.getShippingDelay(), product.getBrand(), product.getCategory(), product.getQuantity(), getNowDate(), product.getId());
+            updateStatement = initPreparedRequest(connection, UPDATE_REQUEST, true, product.getPrice(), product.getShippingCost(), product.getShippingDelay(), product.getQuantity(), getNowDate(), product.getProductId());
             status = updateStatement.executeUpdate();
             if (status != 0) System.out.println("Update passed");
             else System.out.println("Update failed");

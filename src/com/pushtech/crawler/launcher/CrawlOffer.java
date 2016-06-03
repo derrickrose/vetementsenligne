@@ -190,7 +190,7 @@ public class CrawlOffer {
 
    private float getPrice(final Element element) {
       final Element priceElement = findElement(element, Selectors.PRODUCT_PRICE);// TODO
-      String priceRaw = fromAttribute(priceElement, "value");
+      String priceRaw = fromAttribute(priceElement, "data-exact-price");
       priceRaw = validateField(priceRaw, "Price", 1);
       return parseLocalizedPrice(priceRaw);
    }

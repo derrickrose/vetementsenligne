@@ -29,62 +29,50 @@ public class Crawler {
 
          Page page = null;
 
-         String url = "http://www.alcodistributions.fr/";
+         String url = "http://www.grossiste-en-ligne.com/vetement-femme";
 
          try {
+            boolean continueCrawl=true;
+            while (continueCrawl) {
 
-            ArrayList<String> alllisting = getAllListing(url);
-            for (String listing : alllisting) {
-               boolean continueCrawl = true;
-               String rayon = listing;
-               while (continueCrawl) {
+               page = getPageFromUrl(url, EngineContext.MethodType.GET_METHOD);
 
-                  page = getPageFromUrl(rayon, EngineContext.MethodType.GET_METHOD);
+               if (PageType.isProductPage(page)) {
+                  Product product = new CrawlOffer().doAction(page);
+                  products.add(product);
+                  continueCrawl = false;
+               } else if (PageType.isListingPage(page)) {
+                  int indexProduit = 0;
+                  for (String link : CrawlListing.getProductLinks(page)) {
+                     System.out.println("-------------------- Produit n* " + indexProduit + " --------------------");
 
-                  if (PageType.isProductPage(page)) {
-                     Product product = new CrawlOffer().doAction(page);
-                     products.add(product);
-                     continueCrawl = false;
-                  } else if (PageType.isListingPage(page)) {
-                     int indexProduit = 0;
-                     for (String link : CrawlListing.getProductLinks(page)) {
-                        System.out.println("-------------------- Produit n* " + indexProduit + " --------------------");
+                     Product product = new Product();
+                     System.out.println("Link : " + link);
+                     String productId = getIdFromLink(link);
+                     System.out.println("Product Id :" + productId);
 
-                        Product product = new Product();
-                        System.out.println("Link : " + link);
-                        String productId = getIdFromLink(link);
-                        System.out.println("Product Id :" + productId);
-                        // if(Persistance.lireEnBase()){
-                        // continue;
-                        // }
+                     try {
+                        Page productPage = getPageFromUrl(link, EngineContext.MethodType.GET_METHOD);
+                        product = new CrawlOffer().doAction(productPage);
+                        product.setLink(link);
+                        product.setProductId(productId);
 
-                        try {
-                           Page productPage = getPageFromUrl(link, EngineContext.MethodType.GET_METHOD);
-                           product = new CrawlOffer().doAction(productPage);
-                           product.setLink(link);
-                           product.setId(productId);
-
-                           // products.add(product);
-                           // Persistance.sauverEnBase(product);
-                           // System.out.println("-------------");
-
-                           DAOFactory daoFactory = new DataBaseDAO().getFactoryInstance();
-                           AbstractDAOEntity daoEntity = new ProductDAO(daoFactory);
-                           daoEntity.updateEntity(product);
-
-                           // System.out.println("-------------");
-                           indexProduit++;
-                           // break;
-                        } catch (Exception e) {
-                           System.out.println("error =>>> IMPOSSIBLE DE SE CONNECTER");
-                        }
-
+                        DAOFactory daoFactory = new DataBaseDAO().getFactoryInstance();
+                        AbstractDAOEntity daoEntity = new ProductDAO(daoFactory);
+                        daoEntity.updateEntity(product);
+                        indexProduit++;
+                        // break;
+                     } catch (Exception e) {
+                        System.out.println("error =>>> IMPOSSIBLE DE SE CONNECTER");
                      }
-                     rayon = getNextPageLink(page.getDoc());
-                     continueCrawl = rayon != null ? true : false;
-                  } else continueCrawl = false;
-               }
+
+                  }
+                  url = getNextPageLink(page.getDoc());
+                  continueCrawl = url != null ? true : false;
+               } else continueCrawl = false;
             }
+
+
          } catch (Exception e) {
 
          }
@@ -98,26 +86,14 @@ public class Crawler {
       }
    }
 
-   private static ArrayList<String> getAllListing(String link) {
-      ArrayList<String> listes = new ArrayList<String>();
-      Page productPage = getPageFromUrl(link, EngineContext.MethodType.GET_METHOD);
-      Document doc = productPage.getDoc();
-      Elements elts = doc.select(Selectors.ALL_LISTING);
-      if (elts.size() > 0) {
-         for (org.jsoup.nodes.Element data : elts) {
-            System.out.println("Url :" + data.attr("href"));
-            listes.add(cleanPath(data.attr("href")));
-         }
-      }
-      return listes;
-   }
+
 
    private static String cleanPath(String path) {
       if (path == null) return null;
       path = path.replace("" + (char) 201, "%C3%89").replace(" ", "%20").replace("" + (char) 232, "%C3%A8");
       path = path.replace("" + ((char) 96), "%60").replace("" + ((char) 233), "%C3%A9").replace("" + ((char) 146), "%E2%80%99");
       if (!StringUtils.startsWith(path, "http:")) {
-         path = "http://www.alcodistributions.fr" + path;
+         path = "http://www.grossiste-en-ligne.com" + path;
 
       }
       // try {
@@ -141,10 +117,8 @@ public class Crawler {
 
    private static String getIdFromLink(String url) {
       String id = null;
-      if (url.contains("articulo")) {
-         id = url.substring(url.indexOf("articulo/") + "articulo/".length());
-         id = id.substring(0, id.indexOf("/"));
-      }
+      id = url.substring(url.lastIndexOf("/")+1);
+      id = id.substring(0, id.indexOf("-"));
       System.out.println("Id : " + id);
       return id;
    }

@@ -8,23 +8,22 @@ public class Selectors {
    // listing page
 
    // product page
-   public static final String PRODUCT_PAGE_IDENTIFIER = "h1";
-   public static final String PRODUCT_NAME = "h1";
-   public static final String PRODUCT_LINK = "td:has(input[name=codigo]):has(table) a:not(:has(img))";
+   public static final String PRODUCT_PAGE_IDENTIFIER = "span[itemprop=name]";
+   public static final String PRODUCT_NAME = "span[itemprop=name]";
+   public static final String PRODUCT_LINK = "a.link_to_item";
    public static final String PRODUCT_DESCRIPTION = "meta[name=Description]";
    public static final String PRODUCT_KEYWORDS = "meta[name=keywords]";
    public static final String PRODUCT_IDENTIFIER = "span.mini";
 
    public static final String PRODUCT_CATEGORY = ".crumb0>a";
-   public static final String PRODUCT_IMAGE = "img[name=foto]";
-   public static final String PRODUCT_PRICE = "input[name^=precio]";
+   public static final String PRODUCT_IMAGE = "img[id^=picture]";
+   public static final String PRODUCT_PRICE = "span#articlePrice>span>span#price";
 
    // listing page
-   public static final String LISTING_PAGE_IDENTIFIER = "td:has(input[name=codigo]):has(table)";
-   public static final String LISTING_PAGE_PRODUCTS = "td:has(input[name=codigo]):has(table)";
-   public static final String LISTING_PAGE_PRODUCT_LINK = "td:has(input[name=codigo]):has(table) a:not(:has(img))";
-   public static final String NEXT_PAGE_LINK = "a[name=siguiente_pagina]";
- //public static final String ALL_LISTING="div.divino>ul>li>div>ul>ul>li>a";//OTHERS
-  public static final String ALL_LISTING="div#capa118839>ul>li>a";//LICENCE
- //  public static final String ALL_LISTING="div#capa117895>ul>li>a";// EXPOSANTS
+   public static final String LISTING_PAGE_IDENTIFIER = "ul#productsList>li";
+   public static final String LISTING_PAGE_PRODUCTS = "ul#productsList>li";
+  public static final String LISTING_PAGE_PRODUCT_LINK = "a.link_to_item";
+   public static final String NEXT_PAGE_LINK = "ul.pagination>li>a:contains(>)";
+ // public static final String ALL_LISTING="div#capa118839>ul>li>a";//LICENCE
+
 }
