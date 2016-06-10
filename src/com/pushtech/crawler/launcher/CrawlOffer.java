@@ -31,14 +31,7 @@ public class CrawlOffer {
       Product product = new Product();
       final Document productPageDocument = page.getDoc();
 
-      // String strProductId = null;
-      // try {
-      // strProductId = getProductId(productPageDocument);
-      // } catch (Exception e1) {
-      // e1.printStackTrace();
-      // }
-      // product.setId(strProductId);
-      // System.out.println("Product Id : " + strProductId);
+
 
       String name = null;
       try {

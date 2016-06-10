@@ -8,7 +8,7 @@ public class Selectors {
    // listing page
 
    // product page
-   public static final String PRODUCT_PAGE_IDENTIFIER = "span[itemprop=name]";
+   public static final String PRODUCT_PAGE_IDENTIFIER = "div.productViewContent";
    public static final String PRODUCT_NAME = "span[itemprop=name]";
    public static final String PRODUCT_LINK = "a.link_to_item";
    public static final String PRODUCT_DESCRIPTION = "meta[name=Description]";
@@ -24,6 +24,6 @@ public class Selectors {
    public static final String LISTING_PAGE_PRODUCTS = "ul#productsList>li";
   public static final String LISTING_PAGE_PRODUCT_LINK = "a.link_to_item";
    public static final String NEXT_PAGE_LINK = "ul.pagination>li>a:contains(>)";
- // public static final String ALL_LISTING="div#capa118839>ul>li>a";//LICENCE
+
 
 }

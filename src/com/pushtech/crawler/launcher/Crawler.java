@@ -117,7 +117,7 @@ public class Crawler {
 
    private static String getIdFromLink(String url) {
       String id = null;
-      id = url.substring(url.lastIndexOf("/")+1);
+      id = StringUtils.substringAfter(url,"www.grossiste-en-ligne.com/");
       id = id.substring(0, id.indexOf("-"));
       System.out.println("Id : " + id);
       return id;
